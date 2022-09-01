@@ -16,7 +16,8 @@ checkScope(this);
 this.setAttribute("role", "option");
 this.setAttribute("tabindex", "-1");
 if (this.parentElement.isMultiselectable()) {
-this.setAttribute("aria-selected", this.hasAttribute("selected")? "true" : "false");
+this.setAttribute("aria-selected", "false");
+if (this.hasAttribute("select")) this.parentElement.selectOption(this);
 } // if
 if (not(this.parentElement.getFocus())) this.parentElement.setInitialFocus(this);
 

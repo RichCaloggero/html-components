@@ -43,9 +43,8 @@
 </extended-select>
 </label>
 
-<script type="module" src="extended-select.class.js"></script>
-<script type="module" src="extended-option.class.js"></script>
-<script>
+<script type="module">
+import "./html-select.component.js";
 document.addEventListener("change", e => {
 const status = document.querySelector("#status");
 status.insertAdjacentHTML("beforeEnd", `<p>change on ${e.target.parentElement.id}: ${e.target.textContent}</p>`);
