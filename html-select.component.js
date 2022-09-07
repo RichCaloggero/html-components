@@ -76,6 +76,7 @@ option.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 
 #unselectOption (option) {
 option.setAttribute("aria-selected", "false");
+option.dispatchEvent(new CustomEvent("change", {bubbles: true}));
 } // #unselectOption
 
 get selectedOptions () {
@@ -245,7 +246,8 @@ if (name === "aria-selected") this.#handleSelectionChange(newValue);
 } // attributeChangedCallback
 
 #handleSelectionChange (value) {
-if (this.parentElement?.isMultiselectable()) this.setAttribute("aria-checked", value);
+if (this.parentElement?.isMultiselectable() & value === "true") this.setAttribute("aria-checked", "true");
+else this.removeAttribute("aria-checked");
 } // #handleSelectionChange
 
 #handleCheckedStateChange (option, value) {
@@ -298,9 +300,23 @@ x.textContent = "option added before index 1";
 l.add(x, l.children[1]);
 if (not(l.options[1] === x)) throw new Error(`add before index 1 not working; ${l.options[1].textContent}\n`);
 
+x = document.createElement("h2");
+x.textcontent = "self test";
+document.body.appendChild(x);
 document.body.appendChild(l);
 if (not(l.selectedOptions.length === 2)) throw new Error (`test: selectedOptions.length  not correct; ${l.selectedOptions.length}\n`);
 if (not(l.selectedOptions[0] === l.children[3] && l.selectedOptions[1] === l.children[4])) throw new Error(`test: selectedOptions not correct;  ${l.selectedOptions}\n`);
+
+document.body.insertAdjacentHTML("beforeEnd", `
+<h2>html select element test</h2>
+<select id="html-select" multiple>
+<option>foo</option>
+<option selected>bar</option>
+<option selected>baz</option>
+</select>
+`);
+
+
 console.log("** tests complete **\n");
 
 

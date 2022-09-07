@@ -35,7 +35,7 @@
 
 <h2>Test 4</h2>
 
-<label for="test3">Single select with wrapped label
+<label for="test4">Single select with wrapped label
 <extended-select id="test4">
 <extended-option>option 1</extended-option>
 <extended-option selected>option 2</extended-option>
@@ -48,6 +48,7 @@ import "./html-select.component.js";
 document.addEventListener("change", e => {
 const status = document.querySelector("#status");
 status.insertAdjacentHTML("beforeEnd", `<p>change on ${e.target.parentElement.id}: ${e.target.textContent}</p>`);
+console.log("event: ", e, "\n");
 });
 </script>
 
