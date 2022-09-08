@@ -1,4 +1,4 @@
-const runTests = true;
+const runTests = false;
 let idPrefix = 0;
 
 export class ExtendedSelect extends HTMLElement {
