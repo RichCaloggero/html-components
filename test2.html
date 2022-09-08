@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<link rel="stylesheet" href="./style2.css">
+</head>
+<body>
+<h1>Extended Select</h1>
+<div role="status" id="status"></div>
+
+<p><a href="#">Dummy Link</a></p>
+
+<h2>Test 1</h2>
+<ul><li>
+multiple options can be selected
+</li><li>
+arrows to move
+</li><li>
+space to tobble selection
+</li><li>
+the second and third option should be selected by default
+</li></ul>
+
+<label for="test-1">Select multiple:</label>
+<br><extended-select id="test1" multiple>
+<extended-option>option 1</extended-option>
+<extended-option selected>option 2</extended-option>
+<extended-option selected>option 3</extended-option>
+</extended-select>
+<hr>
+
+<h2>Test 2</h2>
+
+<ul><li>
+only one option can be selected at a time
+</li><li>
+arrows move and select
+</li><li>
+spacebar does nothing
+</li><li>
+the first option should be selected by default
+</li></ul>
+
+<label>Select one: <extended-select id="test2">
+<extended-option>option 1</extended-option>
+<extended-option>option 2</extended-option>
+<extended-option>option 3</extended-option>
+</extended-select>
+</label>
+
+<script type="module" src="./html-select.component.js"></script>
+
+</body>
+</html>

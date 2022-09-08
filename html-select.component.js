@@ -5,6 +5,7 @@ export class ExtendedSelect extends HTMLElement {
 static formAssociated = true;
 #internals = null;
 #value = null;
+#visibleOptions = 1;
 #currentFocus = null;
 
 static get observedAttributes () {
@@ -39,7 +40,7 @@ this.setAttribute("aria-multiselectable",
 (newValue === "" || newValue)? "true" : "false"
 ); // setAttribute
 
-if (runTests) console.log("handleMultipleChanged: ", newValue, ", ", this.getAttribute("aria-multiselectable"), "\n");
+//if (runTests) console.log("handleMultipleChanged: ", newValue, ", ", this.getAttribute("aria-multiselectable"), "\n");
 } // handleMultipleChanged
 
 
@@ -83,6 +84,16 @@ get selectedOptions () {
 return this.querySelectorAll("[aria-selected='true']");
 } // selectedOptions
 
+get selection () {
+//[...this.selectedOptions].map(x => x.hasAttribute("value")? x.getAttribute("value") : x.textContent);
+const result = [];
+for (let x of [...this.selectedOptions]) {
+result.push(x.hasAttribute("value")? x.getAttribute("value") : x.textContent);
+} // for
+
+return result;
+} // get selection
+
 get length () {
 return this.children.length;
 } // get length
@@ -96,22 +107,28 @@ if (this.children.length === 0 || this.selectedOptions.length === 0) return -1;
 return [...this.children].findIndex(x => x === this.selectedOptions[0]);
 } // get selectedIndex
 
-add (element, before) {
-if (before instanceof Element && this.contains(before)) before.insertAdjacentElement("beforeBegin", element);
-else if (this.children[before]) this.children[before].insertAdjacentElement("beforeBegin", element);
-else this.insertAdjacentElement("beforeEnd", element);
+add (item, before) {
+if (item instanceof Array) item.forEach(e => this.add(e instanceof Element? e : new ExtendedOption(e.toString()), before));
+else {
+if (before instanceof Element && this.contains(before)) before.insertAdjacentElement("beforeBegin", item);
+else if (this.children[before]) this.children[before].insertAdjacentElement("beforeBegin", item);
+else this.insertAdjacentElement("beforeEnd", item);
 
-this.addOption(element);
+this.addOption(item);
+} // if
 } // add
 
 addOption (option) {
-option.setAttribute("aria-selected", "false");
+this.#fixSetSize();
 if (this.isMultiselectable()) {
 if (option.hasAttribute("selected")) this.#selectOption(option);
 } // if
-//if (runTests && this.id === "test-api") console.log("addOption: ", this, ", ", option, "\n");
 
-if (not(this.#getFocus())) this.#setInitialFocus(option);
+if (not(this.#getFocus())) {
+this.#optionFocusable(option);
+option.focus();
+if (runTests) console.log("initial focus on ", this, " set to ", option, "\n");
+} // if
 } // addOption
 
 #getFocus () {
@@ -126,16 +143,20 @@ clearSelection () {
 [...this.children].forEach(option => option.setAttribute("tabindex", "-1"));
 } // #clearFocus
 
+#hideOptions () {
+[...this.children].forEach(option => option.hidden = true);
+} // #hideOptions 
+
 #setInitialFocus (option) {
 if (this.#getFocus()) return;
-this.#focusOption(option);
+this.#optionFocusable(option);
 } // setInitialFocus
 
 #handleClick (e) {
 if (not(e.target.matches("extended-option"))) return;
 
 const option = e.target;
-this.#focusOption(option);
+this.#optionFocusable(option);
 option.focus();
 } // handleClick
 
@@ -157,16 +178,18 @@ this.children[this.length-1].click();
 } // if
 } // handleKeydown
 
-#focusOption (option) {
+#optionFocusable (option) {
 this.#clearFocus();
+this.#hideOptions();
 
 if (not(this.isMultiselectable())) {
 this.clearSelection();
 this.#selectOption(option);
+if (runTests) console.log("selection follows focus: on ", this, ", ", option, "\n");
 } // if
 
 option.setAttribute("tabindex", "0");
-this.#currentFocus = option;
+option.hidden = false;
 } // #focusOption
 
 #toggleOption (option) {
@@ -186,6 +209,15 @@ const label =  document.querySelector(`label[for="${this.id}"]`);
 if (label) attachLabel(label, this);
 } // if
 } // findLabel
+
+#fixSetSize () {
+[...this.options].forEach((x, i) => {
+const index = i+1;
+x.setAttribute("aria-setsize", this.children.length.toString());
+x.setAttribute("aria-posinset", index.toString());
+});
+} // #fixSetSize
+
 }; // class ExtendedSelect
 
 customElements.define("extended-select", ExtendedSelect);
@@ -218,11 +250,13 @@ static get observedAttributes() {
 return ["aria-selected"];
 } // static observedAttributes
 
-constructor () {
+constructor (content = "") {
 super ();
 this.setAttribute("role", "option");
 this.setAttribute("tabindex", "-1");
 this.setAttribute("aria-selected", "false");
+if (content) this.textContent = content;
+this.hidden = true;
 //console.log(`${this.tagName} constructed\n`);
 } // constructor
 
@@ -275,7 +309,7 @@ let l = new ExtendedSelect();
 
 try {
 console.log("** running tests **\n");
-l.id = "test-api";
+l.id = "self-test1";
 l.setAttribute("multiple", "");
 l.setAttribute("aria-label", "test API");
 l.insertAdjacentHTML("beforeEnd", `
@@ -301,21 +335,28 @@ l.add(x, l.children[1]);
 if (not(l.options[1] === x)) throw new Error(`add before index 1 not working; ${l.options[1].textContent}\n`);
 
 x = document.createElement("h2");
-x.textcontent = "self test";
+x.textcontent = "self test 1";
 document.body.appendChild(x);
 document.body.appendChild(l);
+
+if (not(l.querySelectorAll(":not([hidden])").length === 1)) throw new Error(`number of hidden options should be one; ${l.querySelectorAll("[hidden]").length}`);
 if (not(l.selectedOptions.length === 2)) throw new Error (`test: selectedOptions.length  not correct; ${l.selectedOptions.length}\n`);
 if (not(l.selectedOptions[0] === l.children[3] && l.selectedOptions[1] === l.children[4])) throw new Error(`test: selectedOptions not correct;  ${l.selectedOptions}\n`);
+if (not(l.selection[0] === "1" && l.selection[1] === "2" )) throw new Error("selection not correct; ", l.selection, "\n");
 
-document.body.insertAdjacentHTML("beforeEnd", `
-<h2>html select element test</h2>
-<select id="html-select" multiple>
-<option>foo</option>
-<option selected>bar</option>
-<option selected>baz</option>
-</select>
-`);
+l = new ExtendedSelect();
+l.id = "self-test2";
+l.add(["string 1", "string 2", "string 3"]);
 
+if (l.length !== 3) throw new Error(`array test: length not correct; ${l.length}`);
+
+x = document.createElement("h2");
+x.textcontent = "self test 2 - array test";
+document.body.appendChild(x);
+document.body.appendChild(l);
+
+if (l.selectedOptions.length !== 1) throw new Error(`array test: selected options.length not correct; ${l.selectedOptions.length}`);
+if (l.selectedOptions[0] !== l.children[0]) throw new Error(`array test: selectedOptions not correct`);
 
 console.log("** tests complete **\n");
 

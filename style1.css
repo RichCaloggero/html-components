@@ -1,0 +1,23 @@
+[aria-checked=true]:before {
+content: '\2713';
+}
+
+extended-select, extended-option {
+appearance: none;
+display: block;
+border: none;
+padding: 0;
+margin: 0;
+}
+
+extended-select {
+margin: 3em;
+}
+
+extended-option {
+padding: 2em;
+border-bottom: 1px solid;
+margin-bottom: 3em;
+}
+
+
