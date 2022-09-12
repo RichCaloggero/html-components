@@ -3,7 +3,6 @@ content: '\2713';
 }
 
 extended-select, extended-option {
-appearance: none;
 display: block;
 border: none;
 padding: 0;
@@ -11,6 +10,7 @@ margin: 0;
 }
 
 extended-select {
+position: relative;
 padding: 3em;
 border: 1px solid;
 margin: 3em;
@@ -18,8 +18,18 @@ margin: 3em;
 
 extended-option {
 padding: 1em;
-border-bottom: 1px dotted;
 margin-bottom: 2em;
+}
+
+extended-option:focus {
+border: thin dotted;
+position: absolute;
+left: 0%; right: 100%;
+top: 0%; bottom: 100%;
+}
+
+extended-option[aria-selected='true'] {
+color: green;
 }
 
 

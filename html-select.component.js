@@ -119,15 +119,14 @@ this.addOption(item);
 } // add
 
 addOption (option) {
-this.#fixSetSize();
+//this.#fixSetSize();
 if (this.isMultiselectable()) {
 if (option.hasAttribute("selected")) this.#selectOption(option);
 } // if
 
 if (not(this.#getFocus())) {
 this.#optionFocusable(option);
-option.focus();
-if (runTests) console.log("initial focus on ", this, " set to ", option, "\n");
+//if (runTests) console.log("initial focus on ", this, " set to ", option, "\n");
 } // if
 } // addOption
 
@@ -180,16 +179,16 @@ this.children[this.length-1].click();
 
 #optionFocusable (option) {
 this.#clearFocus();
-this.#hideOptions();
+//this.#hideOptions();
 
 if (not(this.isMultiselectable())) {
 this.clearSelection();
 this.#selectOption(option);
-if (runTests) console.log("selection follows focus: on ", this, ", ", option, "\n");
+//if (runTests) console.log("selection follows focus: on ", this, ", ", option, "\n");
 } // if
 
 option.setAttribute("tabindex", "0");
-option.hidden = false;
+//option.hidden = false;
 } // #focusOption
 
 #toggleOption (option) {
@@ -256,7 +255,7 @@ this.setAttribute("role", "option");
 this.setAttribute("tabindex", "-1");
 this.setAttribute("aria-selected", "false");
 if (content) this.textContent = content;
-this.hidden = true;
+//this.hidden = true;
 //console.log(`${this.tagName} constructed\n`);
 } // constructor
 
@@ -339,7 +338,7 @@ x.textcontent = "self test 1";
 document.body.appendChild(x);
 document.body.appendChild(l);
 
-if (not(l.querySelectorAll(":not([hidden])").length === 1)) throw new Error(`number of hidden options should be one; ${l.querySelectorAll("[hidden]").length}`);
+//if (not(l.querySelectorAll(":not([hidden])").length === 1)) throw new Error(`number of hidden options should be one; ${l.querySelectorAll("[hidden]").length}`);
 if (not(l.selectedOptions.length === 2)) throw new Error (`test: selectedOptions.length  not correct; ${l.selectedOptions.length}\n`);
 if (not(l.selectedOptions[0] === l.children[3] && l.selectedOptions[1] === l.children[4])) throw new Error(`test: selectedOptions not correct;  ${l.selectedOptions}\n`);
 if (not(l.selection[0] === "1" && l.selection[1] === "2" )) throw new Error("selection not correct; ", l.selection, "\n");
