@@ -157,6 +157,7 @@ if (not(e.target.matches("extended-option"))) return;
 const option = e.target;
 this.#optionFocusable(option);
 option.focus();
+option.scrollIntoView();
 } // handleClick
 
 #handleKeydown (e) {
@@ -174,7 +175,22 @@ option.click();
 this.children[0].click();
 } else if (this.length > 0 && key === "End") {
 this.children[this.length-1].click();
+} else if (key.length === 1 && (isAlphabetic(key) || isNumeric(key))) {
+console.log("- search: ", key, "\n");
+const found = findNextOptionStartingWith(key, option.nextElementSibling);
+console.log("- found ", found, "\n");
+if (found) found.click();
 } // if
+
+function findNextOptionStartingWith (character, option) {
+character = character.toLowerCase();
+while (option) {
+if (option.textContent.toLowerCase().startsWith(character)) return option;
+option = option.nextElementSibling;
+} // while
+
+return null;
+} // findNextOptionStartingWith
 } // handleKeydown
 
 #optionFocusable (option) {
@@ -220,6 +236,15 @@ x.setAttribute("aria-posinset", index.toString());
 }; // class ExtendedSelect
 
 customElements.define("extended-select", ExtendedSelect);
+
+function isAlphabetic (x) {
+return /[A-Za-z]/.test(x);
+} // isAlphabetic
+
+function isNumeric (x) {
+return /[0-9-+.]/.test(x);
+} // isNumeric
+
 
 
 function attachLabel (label, element) {

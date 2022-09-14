@@ -1,43 +1,4 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>test</title>
-<link rel="stylesheet" href="./style1.css">
-</head>
-<body>
-<h1>Test</h1>
-<div id="status" role="log"></div>
-
-<p><button id="clearLog">Clear Log</button></p>
-
-<label>Select one:
-<br><extended-select></extended-select>
-</label>
-
-
-<!--<script type="module" src="./html-select.component.js"></script>-->
-<script type="module">
-import "./html-select.component.js";
-const l = document.querySelector("extended-select");
-
-l.add(countryList());
-
-
-//l.addEventListener("focusin", e => displayLayoutInfo(e.target));
-
-
-function displayLayoutInfo (element) {
-const r = element.getBoundingClientRect();
-const log = document.querySelector("#status");
-log.innerHTML = `<p>
-coordinates: ${Number(r.left + window.scrollX).toFixed(1)}, ${Number(r.top + window.scrollY).toFixed(1)};<br>
-size: ${Number(r.width).toFixed(1)}, ${Number(r.height).toFixed(1)};
-</p>`;
-} // displayLayoutInfo
-
-function countryList () {
-return `Afghanistan
+Afghanistan
 Albania
 Algeria
 Andorra
@@ -231,11 +192,4 @@ Venezuela
 Vietnam
 Yemen
 Zambia
-Zimbabwe`.split("\n");
-} // countryList
-
-
-</script>
-
-</body>
-</html>
+Zimbabwe
