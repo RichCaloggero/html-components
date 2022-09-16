@@ -23,7 +23,7 @@ connectedCallback () {
 //if (this.isConnected) {
 this.addEventListener("click", this.#handleClick);
 this.addEventListener("keydown", this.#handleKeydown);
-this.#findLabel();
+//this.#findLabel();
 if (runTests) console.log(`${this.tagName} is connected\n`);
 
 //} else {
@@ -47,12 +47,14 @@ this.setAttribute("aria-multiselectable",
 /// form support
 
 // Form controls usually expose a "value" property
-get value() { return this.#value; }
-set value(v) { this.#value = v; }
+get value() { return this.hasAttribute("js-value")? this.selection : JSON.stringify(this.selection); }
 
 // The following properties and methods aren't strictly required,
 // but browser-level form controls provide them. Providing them helps
 // ensure consistency with browser-provided controls.
+get internals () {return this.#internals;}
+
+
 get form() { return this.#internals.form; }
 get name() { return this.getAttribute('name'); }
 get type() { return this.localName; }
@@ -176,9 +178,7 @@ this.children[0].click();
 } else if (this.length > 0 && key === "End") {
 this.children[this.length-1].click();
 } else if (key.length === 1 && (isAlphabetic(key) || isNumeric(key))) {
-console.log("- search: ", key, "\n");
 const found = findNextOptionStartingWith(key, option.nextElementSibling);
-console.log("- found ", found, "\n");
 if (found) found.click();
 } // if
 
